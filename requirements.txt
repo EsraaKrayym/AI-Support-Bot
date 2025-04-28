@@ -1,0 +1,7 @@
+requests
+fastapi
+aiobotocore
+pyTelegramBotAPI
+openai
+trivy
+discord.py

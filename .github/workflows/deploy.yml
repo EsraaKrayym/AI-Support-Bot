@@ -1,0 +1,32 @@
+name: Build and Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker images
+        run: |
+          docker build -t <your_docker_image_for_bot> ./bot
+          docker build -t <your_docker_image_for_ai_analysis> ./ai_analysis
+          docker build -t <your_docker_image_for_security_check> ./security_check
+
+      - name: Push Docker images to DockerHub
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push <your_docker_image_for_bot>
+          docker push <your_docker_image_for_ai_analysis>
+          docker push <your_docker_image_for_security_check>
+
+      - name: Deploy to Argo CD
+        run: |
+          kubectl apply -f k8s/
+          kubectl rollout restart deployment ai-support-bot

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-analysis-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-analysis
+  template:
+    metadata:
+      labels:
+        app: ai-analysis
+    spec:
+      containers:
+        - name: ai-analysis-service
+          image: <your_docker_image_for_ai_analysis>
+          ports:
+            - containerPort: 8001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-analysis-service
+spec:
+  selector:
+    app: ai-analysis
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8001
+  type: ClusterIP

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-check-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: security-check
+  template:
+    metadata:
+      labels:
+        app: security-check
+    spec:
+      containers:
+        - name: security-check-service
+          image: <your_docker_image_for_security_check>
+          ports:
+            - containerPort: 8002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: security-check-service
+spec:
+  selector:
+    app: security-check
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8002
+  type: ClusterIP
