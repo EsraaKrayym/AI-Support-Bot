@@ -1,9 +1,9 @@
-name: Build and Deploy to Kubernetes
+name: Docker Image Scan
 
-on:
-  push:
-    branches:
-      - master
+on: [push]
+
+env:
+  USER: "esraakrayym"
 
 jobs:
   build:
