@@ -5,7 +5,7 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Kopiere requirements.txt und installiere die Abhängigkeiten
-COPY requirements.txt /app/requirements.txt
+COPY requirements.txt /requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere den Rest des Projekts in den Container
@@ -15,4 +15,4 @@ COPY . /app
 EXPOSE 8002
 
 # Starte den Sicherheits-Check-Service
-CMD ["python", "app/security_check.py"]
+CMD ["python", "security_check.py"]
