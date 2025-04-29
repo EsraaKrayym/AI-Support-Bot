@@ -1,0 +1,7 @@
+# Use the already built image as the base
+FROM ghcr.io/esraakrayym/ai-support-bot:latest
+
+# Copy the Trivy scan output file into the image
+COPY trivy_output.json /app/trivy_output.json
+
+CMD ["python", "main.py"]

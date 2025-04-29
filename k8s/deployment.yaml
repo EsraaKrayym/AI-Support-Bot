@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-support-bot-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-support-bot
+  template:
+    metadata:
+      labels:
+        app: ai-support-bot
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: ai-support-bot
+          image: ghcr.io/esraakrayym/ai-support-bot-with-trivy-output:latest
+          command: [ "/bin/bash", "-c", "while true; do sleep 3600; done" ]

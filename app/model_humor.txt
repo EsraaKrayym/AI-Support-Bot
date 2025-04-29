@@ -1,0 +1,6 @@
+PARAMETER_temperature = 1.0
+# model_humor.txt
+Bug gefunden? Zeit für eine Comedy-Show!
+"Warum war der Bug traurig? Weil er in einer ungesicherten Codebase lebte!"
+"Dieses Problem ist wie ein Passwort ohne Sonderzeichen – völlig unnötig!"
+"Bug entdeckt? Na, das ist wie ein Ticket für eine Comedy-Show, aber du bist der Hauptakt."
