@@ -3,13 +3,11 @@ stages:
   - test
   - deploy
 
-variables:
-  DOCKER_DRIVER: overlay2
-
 build:
   stage: build
   script:
-    - docker build -t ai_support_bot ./app
+    - docker build -t ai_support_bot ./bot
+    - docker build -t ai_analysis_service ./ai_analysis
     - docker build -t security_check_service ./security_check
     - docker-compose up -d
   only:

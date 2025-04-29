@@ -30,3 +30,18 @@ jobs:
         run: |
           kubectl apply -f k8s/
           kubectl rollout restart deployment ai-support-bot
+
+      # Install Trivy (Specific version v0.60.1)
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.0
+        with:
+          version: latest # Specify the desired version
+      # Build the new Docker image with trivy_output.json
+      - name: Build the new Docker image with trivy_output.json
+        run: |
+          docker build -t ghcr.io/$USER/ai-support-bot-with-trivy-output:latest -f Dockerfile.trivy-analysis .
+
+      # Push the Docker image to GitHub Container Registry
+      - name: Push the Docker image to GitHub Container Registry
+        run: |
+          docker push ghcr.io/$USER/ai-support-bot-with-trivy-output:latest
