@@ -1,7 +1,9 @@
 version: '3'
 services:
   bot:
-    build: ./bot
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
     ports:
       - "8000:8000"
     volumes:
@@ -10,9 +12,10 @@ services:
       - OPENAI_API_KEY=your_openai_api_key
     depends_on:
       - db
-
   ai_analysis:
-    build: ./ai_analysis
+    build:
+      context: .
+      dockerfile: ai_analysis/Dockerfile
     ports:
       - "8001:8001"
     volumes:
@@ -21,16 +24,14 @@ services:
       - OPENAI_API_KEY=your_openai_api_key
     depends_on:
       - db
-
   security_check:
-    build: ./security_check
+    build:
+      context: .
+      dockerfile: security_check/Dockerfile
     ports:
       - "8002:8002"
-    volumes:
-      - .:/app
     depends_on:
       - db
-
   db:
     image: postgres:alpine
     environment:
