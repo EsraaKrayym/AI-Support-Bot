@@ -21,3 +21,11 @@ This is a bot that analyzes logs and security issues, providing alerts and solut
 ## Deployment
 
 This project is deployed using Argo CD and Kubernetes. Please refer to the Kubernetes files in the `k8s/` directory.
+ 
+## Argo-CD-Anwendung erstellen
+kubectl apply -f argo-app.yaml
+## Docker-Container bauen und starten
+docker-compose build
+docker-compose up
+## Kubernetes-Deployment durchführen
+kubectl apply -f k8s/

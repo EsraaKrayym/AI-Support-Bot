@@ -1,0 +1,29 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+build:
+  stage: build
+  script:
+    - docker build -t ai_support_bot ./app
+    - docker build -t security_check_service ./security_check
+    - docker-compose up -d
+  only:
+    - master
+
+test:
+  stage: test
+  script:
+    - pytest tests/
+
+deploy:
+  stage: deploy
+  script:
+    - kubectl apply -f k8s/
+    - kubectl rollout restart deployment ai-support-bot
+  only:
+    - master
