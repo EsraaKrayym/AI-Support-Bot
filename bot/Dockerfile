@@ -5,7 +5,7 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Kopiere die requirements.txt ins Arbeitsverzeichnis
-COPY ../requirements.txt /app/requirements.txt
+COPY requirements.txt /app/requirements.txt
 
 # Installiere die Abhängigkeiten
 RUN pip install --no-cache-dir -r requirements.txt
