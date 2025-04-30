@@ -2,14 +2,14 @@ import logging
 import json
 import asyncio
 import aiohttp
-
-import logging
 import os
-
+import discord
 import ollama
 import requests
 import random
 import subprocess
+
+from discord import client
 from dotenv import load_dotenv
 
 # Lade Umgebungsvariablen
@@ -23,6 +23,7 @@ DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL')
 MODEL_HUMOR_PATH = os.getenv('MODEL_HUMOR_PATH')
 TRIVY_REPORT_PATH = os.getenv('TRIVY_REPORT_PATH')
 
+
 if not DISCORD_WEBHOOK_URL:
     raise ValueError("DISCORD_WEBHOOK_URL fehlt in der .env-Datei.")
 if not MODEL_HUMOR_PATH:
@@ -32,6 +33,56 @@ if not MODEL_HUMOR_PATH:
 # Konfiguriere Ollama-Client
 ollama_host = os.getenv('OLLAMA_HOST', 'http://localhost:11434')  # Falls der Host ein anderer ist
 ollama_client = ollama.Client(host=ollama_host)  # Ollama-Client wird hier instanziiert
+
+
+# Erstelle die Intents
+intents = discord.Intents.default()  # Aktiviert standardmäßig die gängigen Ereignisse
+intents.messages = True  # Aktiviert das Empfangen von Nachrichten
+intents.guilds = True    # Aktiviert das Empfangen von Serverereignissen
+
+# Erstelle den Discord-Client mit den Intents
+client = discord.Client(intents=discord.Intents.default())
+
+
+
+@client.event
+async def on_ready():
+    print(f'Bot ist eingeloggt als {client.user}')
+
+
+# Vordefinierte Fragen, auf die der Bot antworten soll
+def get_response(message_content):
+    responses = {
+        "warum konnte die lokalseite nicht geöffnet werden?": "Die Seite konnte nicht geöffnet werden, weil es eine Sicherheitslücke gibt. Bitte aktualisiere den Webserver!",
+        "wie behebe ich die Sicherheitslücke in nginx?": "Aktualisiere nginx auf die neueste Version, um die Pufferüberlauf-Schwachstelle zu beheben.",
+        "was sind die neuesten Trivy-Sicherheitslücken?": "Die neuesten Trivy-Scans zeigen mehrere Schwachstellen in OpenSSL und Apache.",
+        "was ist eine XSS-Schwachstelle?": "Eine XSS-Schwachstelle (Cross-Site Scripting) ermöglicht es Angreifern, bösartigen JavaScript-Code in eine Webseite einzuschleusen."
+    }
+
+    # Wenn die Nachricht eine der vordefinierten Fragen ist, gib die Antwort zurück
+    return responses.get(message_content.lower(), None)
+
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    # Hole die Antwort basierend auf der Nachricht
+    response = get_response(message.content)
+
+    if response:
+        # Sende die Antwort an den Discord-Channel
+        await message.channel.send(response)
+    else:
+        logging.debug(f"Bot hat keine Antwort auf: {message.content}")
+
+
+
+
+
+
+
 
 # Humorvolle Antworten (Beispielantworten)
 def load_humor_model():
@@ -159,6 +210,7 @@ async def main():
 
     except Exception as e:
         logging.error(f"Error in main process: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
