@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app
 
 # Setze den Port für den Sicherheits-Check-Service
-EXPOSE 8002
-
+#EXPOSE 8002
+EXPOSE 8000
 # Starte den Sicherheits-Check-Service
 CMD ["python", "security_check.py"]
