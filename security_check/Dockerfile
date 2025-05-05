@@ -5,14 +5,15 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Kopiere requirements.txt und installiere die Abhängigkeiten
-4COPY requirements.txt /app/requirements.txt
+COPY requirements.txt /app/requirements.txt
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere den Rest des Projekts in den Container
 COPY . /app
 
 # Setze den Port für den Sicherheits-Check-Service
-#EXPOSE 8002
-EXPOSE 8000
+EXPOSE 8002
+
 # Starte den Sicherheits-Check-Service
 CMD ["python", "security_check.py"]

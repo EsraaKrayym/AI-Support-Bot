@@ -1,0 +1,6 @@
+requests
+fastapi
+aiobotocore
+pyTelegramBotAPI
+openai
+discord.py

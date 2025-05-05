@@ -6,13 +6,13 @@ WORKDIR /app
 
 # Kopiere requirements.txt und installiere die Abhängigkeiten
 COPY requirements.txt /app/requirements.txt
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere den Rest des Projekts in den Container
-#COPY . /app
+COPY . /app
 
 # Setze den Port, den der KI-Analyse-Service verwenden wird
-#EXPOSE 8001
 EXPOSE 8001
 # Starte den KI-Analyse-Service
 CMD ["python", "ai_analysis.py"]
