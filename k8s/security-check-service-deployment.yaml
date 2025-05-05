@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: security-check-service
-          image: <your_docker_image_for_security_check>
+          image: ai-support-bot-bot:latest
           ports:
             - containerPort: 8002
 ---

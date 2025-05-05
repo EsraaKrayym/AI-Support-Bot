@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: bot-service
-          image: <your_docker_image_for_bot>
+          image: ai-support-bot-bot:latest
           ports:
             - containerPort: 8000
 ---
