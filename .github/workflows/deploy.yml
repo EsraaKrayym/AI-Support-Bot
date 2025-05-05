@@ -20,12 +20,7 @@ jobs:
           docker build -t ai_analysis_service ./ai_analysis
           docker build -t security_check_service ./security_check
 
-      - name: Push Docker images to DockerHub
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push ai_support_bot
-          docker push ai_analysis_service
-          docker push security_check_service
+    
 
       - name: Deploy to Argo CD
         run: |
