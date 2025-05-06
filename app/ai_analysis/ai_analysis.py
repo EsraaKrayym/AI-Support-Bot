@@ -10,3 +10,6 @@ def analyze_logs():
         max_tokens=150
     )
     return response.choices[0].text.strip()
+
+
+

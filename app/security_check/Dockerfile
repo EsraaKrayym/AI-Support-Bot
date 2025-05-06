@@ -10,10 +10,11 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere den Rest des Projekts in den Container
-COPY . /app
+#COPY ./ /app/security_check
+COPY ./security_check /app/security_check
 
 # Setze den Port für den Sicherheits-Check-Service
 EXPOSE 8002
 
 # Starte den Sicherheits-Check-Service
-CMD ["python", "security_check.py"]
+CMD ["python", "/app/security_check/security_check.py"]

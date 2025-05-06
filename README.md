@@ -29,3 +29,9 @@ docker-compose build
 docker-compose up
 ## Kubernetes-Deployment durchführen
 kubectl apply -f k8s/
+## contiener starten
+docker-compose up
+
+docker build -t ai-support-bot-bot:latest .
+kubectl get deployment ai-analysis-service -o yaml
+

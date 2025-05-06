@@ -4,17 +4,16 @@ FROM python:3.8-slim
 # Arbeitsverzeichnis setzen
 WORKDIR /app
 
-# Kopiere die requirements.txt ins Arbeitsverzeichnis
+# Kopiere requirements.txt und installiere die Abhängigkeiten
 COPY requirements.txt /app/requirements.txt
 
-# Installiere die Abhängigkeiten
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere den Rest des Projekts in den Container
-COPY . /app
+COPY ./ /app/ai_analysis
 
-# Setze den Port für den Bot
-EXPOSE 8000
 
-# Starte den Bot
-CMD ["python", "bot.py"]
+# Setze den Port, den der KI-Analyse-Service verwenden wird
+EXPOSE 8001
+# Starte den KI-Analyse-Service
+CMD ["python", "/app/ai_analysis/ai_analysis.py"]
