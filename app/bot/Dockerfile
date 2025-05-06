@@ -16,4 +16,4 @@ COPY ./ /app/bot
 EXPOSE 8000
 
 # Starte den Bot
-CMD ["python", "/app/bot.py"]
+CMD ["python", "/app/bot/bot.py"]
