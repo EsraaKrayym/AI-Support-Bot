@@ -15,6 +15,7 @@ spec:
       containers:
         - name: ai-analysis-service
           image: ai-support-bot-ai_analysis:latest
+          #          image: ai-support-bot-bot:latest
           imagePullPolicy: IfNotPresent
 
 
