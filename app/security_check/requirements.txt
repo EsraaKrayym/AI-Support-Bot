@@ -4,3 +4,4 @@ aiobotocore
 pyTelegramBotAPI
 openai
 discord.py
+ollama

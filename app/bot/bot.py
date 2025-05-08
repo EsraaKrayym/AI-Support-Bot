@@ -80,10 +80,6 @@ async def on_message(message):
 
 
 
-
-
-
-
 # Humorvolle Antworten (Beispielantworten)
 def load_humor_model():
     humor_responses = [

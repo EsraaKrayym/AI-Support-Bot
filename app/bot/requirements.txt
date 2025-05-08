@@ -4,3 +4,5 @@ aiobotocore
 pyTelegramBotAPI
 openai
 discord.py
+ollama
+python-dotenv
