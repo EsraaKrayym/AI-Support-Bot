@@ -34,4 +34,5 @@ docker-compose up
 
 docker build -t ai-support-bot-bot:latest .
 kubectl get deployment ai-analysis-service -o yaml
+#####
 
