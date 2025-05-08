@@ -4,12 +4,10 @@ import asyncio
 import aiohttp
 import os
 import discord
-import ollama
 import requests
-import random
 import subprocess
 
-from discord import client
+
 from dotenv import load_dotenv
 
 # Lade Umgebungsvariablen
@@ -31,8 +29,8 @@ if not MODEL_HUMOR_PATH:
 
 
 # Konfiguriere Ollama-Client
-ollama_host = os.getenv('OLLAMA_HOST', 'http://localhost:11434')  # Falls der Host ein anderer ist
-ollama_client = ollama.Client(host=ollama_host)  # Ollama-Client wird hier instanziiert
+#ollama_host = os.getenv('OLLAMA_HOST', 'http://localhost:11434')  # Falls der Host ein anderer ist
+#ollama_client = ollama.Client(host=ollama_host)  # Ollama-Client wird hier instanziiert
 
 
 # Erstelle die Intents
@@ -41,13 +39,13 @@ intents.messages = True  # Aktiviert das Empfangen von Nachrichten
 intents.guilds = True    # Aktiviert das Empfangen von Serverereignissen
 
 # Erstelle den Discord-Client mit den Intents
-client = discord.Client(intents=discord.Intents.default())
+#client = discord.Client(intents=discord.Intents.default())
 
 
 
-@client.event
-async def on_ready():
-    print(f'Bot ist eingeloggt als {client.user}')
+#@client.event
+#async def on_ready():
+ #   print(f'Bot ist eingeloggt als {client.user}')
 
 
 # Vordefinierte Fragen, auf die der Bot antworten soll
@@ -63,19 +61,19 @@ def get_response(message_content):
     return responses.get(message_content.lower(), None)
 
 
-@client.event
-async def on_message(message):
+#@client.event
+#async def on_message(message):
     if message.author == client.user:
         return
 
     # Hole die Antwort basierend auf der Nachricht
     response = get_response(message.content)
 
-    if response:
+    #if response:
         # Sende die Antwort an den Discord-Channel
-        await message.channel.send(response)
-    else:
-        logging.debug(f"Bot hat keine Antwort auf: {message.content}")
+        #await message.channel.send(response)
+    #else:
+     #   logging.debug(f"Bot hat keine Antwort auf: {message.content}")
 
 
 
@@ -152,7 +150,7 @@ async def send_prompt_to_ollama(prompt, model="tinyllama", temperature=1.0):
     try:
         # Using the synchronous generate with asyncio.to_thread
         response = await asyncio.to_thread(
-            ollama_client.generate,
+            #ollama_client.generate,
             model=model,
             prompt=prompt,
             options={'temperature': temperature}
@@ -213,4 +211,12 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        while True:
+            asyncio.run(main())  # Analysiert und sendet
+            logging.info("Warte 120 Sekunden bis zur nächsten Analyse...")
+            import time
+            time.sleep(120)
+    except KeyboardInterrupt:
+        logging.info("Beendet durch Benutzer")
+

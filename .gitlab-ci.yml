@@ -6,7 +6,7 @@ stages:
 build:
   stage: build
   script:
-    # Ersetze <your_docker_image_for_bot> durch den tatsächlichen Namen
+
     - docker build -t ai_support_bot ./bot
     - docker build -t ai_analysis_service ./ai_analysis
     - docker build -t security_check_service ./security_check

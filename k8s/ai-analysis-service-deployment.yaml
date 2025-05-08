@@ -14,7 +14,10 @@ spec:
     spec:
       containers:
         - name: ai-analysis-service
-          image: ai-support-bot-bot:latest
+          image: ai-support-bot-ai_analysis:latest
+          imagePullPolicy: IfNotPresent
+
+
           ports:
             - containerPort: 8001
 ---

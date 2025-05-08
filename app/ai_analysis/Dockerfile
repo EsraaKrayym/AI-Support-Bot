@@ -1,19 +1,11 @@
-# Verwende ein leichtes Python-Image
-FROM python:3.8-slim
+FROM python:3.10-slim
 
-# Arbeitsverzeichnis setzen
+
 WORKDIR /app
 
-# Kopiere requirements.txt und installiere die Abhängigkeiten
+COPY app/ai_analysis /app
 COPY requirements.txt /app/requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Kopiere den Rest des Projekts in den Container
-COPY ./ /app/ai_analysis
-
-
-# Setze den Port, den der KI-Analyse-Service verwenden wird
-EXPOSE 8001
-# Starte den KI-Analyse-Service
-CMD ["python", "/app/ai_analysis/ai_analysis.py"]
+CMD ["python", "ai_analysis.py"]

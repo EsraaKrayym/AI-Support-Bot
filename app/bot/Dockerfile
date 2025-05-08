@@ -1,19 +1,11 @@
-# Verwende ein leichtes Python-Image
-FROM python:3.8-slim
+FROM python:3.10-slim
 
-# Arbeitsverzeichnis setzen
+
 WORKDIR /app
 
-# Kopiere die requirements.txt ins Arbeitsverzeichnis
+COPY app/bot /app
 COPY requirements.txt /app/requirements.txt
 
-# Installiere die Abhängigkeiten
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Kopiere den Rest des Projekts in den Container
-COPY ./ /app/bot
-# Setze den Port für den Bot
-EXPOSE 8000
-
-# Starte den Bot
-CMD ["python", "/app/bot/bot.py"]
+CMD ["python", "bot.py"]

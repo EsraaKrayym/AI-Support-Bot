@@ -14,7 +14,10 @@ spec:
     spec:
       containers:
         - name: security-check-service
-          image: ai-support-bot-bot:latest
+          image: ai-support-bot-security_check:latest
+          imagePullPolicy: IfNotPresent
+
+
           ports:
             - containerPort: 8002
 ---

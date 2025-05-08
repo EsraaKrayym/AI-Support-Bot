@@ -2,5 +2,8 @@ requests
 fastapi
 aiobotocore
 pyTelegramBotAPI
-openai
+openai==0.28
 discord.py
+ollama
+python-dotenv
+aiohttp

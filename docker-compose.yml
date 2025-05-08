@@ -1,20 +1,15 @@
-
 services:
   ai_analysis:
     build:
       context: .
       dockerfile: app/ai_analysis/Dockerfile
-    volumes:
-      - ./requirements.txt:/app/requirements.txt
+
   bot:
     build:
       context: .
       dockerfile: app/bot/Dockerfile
-    volumes:
-      - ./requirements.txt:/app/requirements.txt
+
   security_check:
     build:
       context: .
       dockerfile: app/security_check/Dockerfile
-    volumes:
-      - ./requirements.txt:/app/requirements.txt

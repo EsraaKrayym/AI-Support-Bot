@@ -1,4 +1,5 @@
 import subprocess
+import time
 
 def check_security():
     result = subprocess.run(['trivy', 'image', 'myapp'], stdout=subprocess.PIPE)
@@ -8,3 +9,8 @@ def check_security():
         return output
     else:
         return "Keine Sicherheitslücken gefunden."
+
+if __name__ == "__main__":
+    while True:
+        print(check_security())
+        time.sleep(120)

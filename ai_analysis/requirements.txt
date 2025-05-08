@@ -2,7 +2,7 @@ requests
 fastapi
 aiobotocore
 pyTelegramBotAPI
-openai==0.28
+openai
 discord.py
 ollama
 python-dotenv
