@@ -63,8 +63,8 @@ def get_response(message_content):
 
 #@client.event
 #async def on_message(message):
-    if message.author == client.user:
-        return
+   # if message.author == client.user:
+        #return
 
     # Hole die Antwort basierend auf der Nachricht
     response = get_response(message.content)
