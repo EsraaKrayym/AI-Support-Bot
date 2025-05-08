@@ -1,16 +1,14 @@
 FROM python:3.10-slim
 
+WORKDIR /app/bot
 
-WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./ /app/bot
+# Korrigierter Pfad
+COPY ./app/bot/bot.py .
+# Falls nötig: extra Dateien aus dem übergeordneten Ordner
+COPY ../trivy_output.json /app/
+COPY ../model_humor.txt /app/
 
-
-COPY requirements.txt /app/requirements.txt
-
-COPY trivy_output.json /app/
-COPY  model_humor.txt /app/
-
-RUN pip install --no-cache-dir -r /app/requirements.txt
-
-CMD ["python", "/app/bot/bot.py"]
+CMD ["python", "bot.py"]
