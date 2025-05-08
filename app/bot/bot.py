@@ -78,10 +78,6 @@ def get_response(message_content):
 
 
 
-
-
-
-
 # Humorvolle Antworten (Beispielantworten)
 def load_humor_model():
     humor_responses = [
