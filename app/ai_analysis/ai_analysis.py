@@ -1,9 +1,12 @@
-import openai
+import os
 import time
+import openai
 from openai.error import RateLimitError
+from dotenv import load_dotenv
+load_dotenv()
 
-openai.api_key="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"
-
+# OpenAI
+openai.api_key = os.getenv("OPENAI_API_KEY")
 def analyze_logs():
     logs = "log data to analyze"
 

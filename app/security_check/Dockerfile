@@ -1,20 +1,34 @@
+# app/security_check/Dockerfile
+
 FROM python:3.10-slim
 
+# Arbeitsverzeichnis
 WORKDIR /app/security_check
 
-RUN apt-get update && apt-get install -y \
-    curl \
-    && curl -sfL https://github.com/aquasecurity/trivy/releases/download/v0.34.0/trivy_0.34.0_Linux-64bit.deb -o trivy.deb \
-    && dpkg -i trivy.deb \
-    && rm trivy.deb \
-    && apt-get clean
+# System-Pakete für Trivy installieren
+RUN apt-get update && \
+    apt-get install -y curl gnupg lsb-release wget && \
+    # Trivy Repository hinzufügen
+    wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | apt-key add - && \
+    echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" \
+      | tee /etc/apt/sources.list.d/trivy.list && \
+    apt-get update && \
+    apt-get install -y trivy && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+# Pre-warm Trivy-Datenbank-Cache (optional)
+RUN mkdir -p /root/.cache/trivy && \
+    trivy image \
+      --cache-dir /root/.cache/trivy \
+      --format json \
+      --quiet alpine:latest || true
+
+# Python-Abhängigkeiten installieren
+COPY app/security_check/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Korrigierter Pfad
-COPY ./app/security_check/security_check.py .
+# Anwendungscode kopieren
+COPY app/security_check/security_check.py .
 
-EXPOSE 8002
-
+# Standardkommando
 CMD ["python", "security_check.py"]

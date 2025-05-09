@@ -20,6 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL')
 MODEL_HUMOR_PATH = os.getenv('MODEL_HUMOR_PATH')
 TRIVY_REPORT_PATH = os.getenv('TRIVY_REPORT_PATH')
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://host.docker.internal:11434")
 
 
 if not DISCORD_WEBHOOK_URL:
@@ -104,10 +105,11 @@ def analyze_logs_with_ollama(logs):
     return result.stdout
 
 # Funktion zum Laden der Trivy-Logs
-def load_trivy_logs(log_path="trivy_output.json"):
+def load_trivy_logs(log_path=None):
+    path = log_path or TRIVY_REPORT_PATH
     try:
-        with open(log_path, "r", encoding="utf-8") as file:
-            raw_data = json.load(file)
+        with open(path, "r", encoding="utf-8") as f:
+            raw_data = json.load(f)
             vulnerabilities = []
             if isinstance(raw_data, dict) and "Results" in raw_data:
                 for result in raw_data["Results"]:
@@ -142,20 +144,44 @@ def build_prompt_with_logs(logs):
         return ""
 
 # Funktion, um die Logs an Ollama zu senden
-async def send_prompt_to_ollama(prompt, model="tinyllama", temperature=1.0):
+async def send_prompt_to_ollama(prompt: str, model: str = "tinyllama", temperature: float = 1.0) -> str:
+    url = f"{OLLAMA_HOST}/v1/completions"
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "temperature": temperature
+    }
     try:
-        # Using the synchronous generate with asyncio.to_thread
-        response = await asyncio.to_thread(
-            #ollama_client.generate,
-            model=model,
-            prompt=prompt,
-            options={'temperature': temperature}
-        )
-        logging.info("Prompt sent to Ollama successfully.")
-        return response.get('response', "No funny response generated.")
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=payload) as resp:
+                if resp.status != 200:
+                    text = await resp.text()
+                    logging.error(f"Ollama API responded {resp.status}: {text}")
+                    return "❌ Ollama‑Fehler."
+                data = await resp.json()
+
+        # **Hier** den komplette Roh‑JSON loggen:
+        logging.debug(f"Ollama‑Raw JSON: {json.dumps(data, ensure_ascii=False, indent=2)}")
+
+        # OpenAI‑Style parsing…
+        if "choices" in data and data["choices"]:
+            choice = data["choices"][0]
+            if "message" in choice and "content" in choice["message"]:
+                return choice["message"]["content"].strip()
+            if "completion" in choice:
+                return choice["completion"].strip()
+            if "text" in choice:
+                return choice["text"].strip()
+
+        if "completions" in data and data["completions"]:
+            return data["completions"][0].get("content", "").strip()
+
+        logging.error(f"Unexpected Ollama response shape: {data}")
+        return "❌ Ungültige Antwort von Ollama."
+
     except Exception as e:
-        logging.error(f"Ollama generate error: {e}")
-        return "Oops, I tried to be funny, but I crashed harder than your CI pipeline."
+        logging.error(f"Ollama Fehler: {e}")
+        return "❌ Fehler bei der Ollama‑Anfrage."
 
 # Funktion, um Discord-Nachricht zu säubern
 def clean_discord_message(text, max_length=1900):
@@ -197,7 +223,6 @@ async def main():
         if not prompt:
             logging.error("Failed to build prompt.")
             return
-
         response = await send_prompt_to_ollama(prompt, temperature=1.1)
         final_message = clean_discord_message(response)
         await send_discord_message_async(final_message)

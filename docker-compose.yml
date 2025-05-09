@@ -1,15 +1,36 @@
 services:
-  ai_analysis:
-    build:
-      context: .
-      dockerfile: app/ai_analysis/Dockerfile
-
   bot:
     build:
       context: .
       dockerfile: app/bot/Dockerfile
+    image: ai-support-bot-bot
+    volumes:
+      - shared-logs:/app/shared
+    env_file:
+      - app/bot/.env
+
+  ai_analysis:
+    build:
+      context: .
+      dockerfile: app/ai_analysis/Dockerfile
+    env_file:
+      - app/bot/.env
 
   security_check:
     build:
       context: .
       dockerfile: app/security_check/Dockerfile
+    image: ai-support-bot-security-check
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - shared-logs:/app/shared
+    environment:
+      TRIVY_IMAGE: ai-support-bot-bot
+      CHECK_INTERVAL: 120
+      TRIVY_TIMEOUT: 600
+      TRIVY_REPORT_PATH: /app/shared/trivy_output.json
+    env_file:
+      - app/bot/.env
+
+volumes:
+  shared-logs:

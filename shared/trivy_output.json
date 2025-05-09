@@ -1,0 +1,18 @@
+﻿{
+  "Results": [
+    {
+      "Vulnerabilities": [
+        {
+          "Title": "OpenSSL Buffer Overflow",
+          "Description": "Ein Pufferüberlauf wurde in OpenSSL entdeckt.",
+          "Severity": "HIGH"
+        },
+        {
+          "Title": "Apache Directory Traversal",
+          "Description": "Angreifer können auf unautorisierte Dateien zugreifen.",
+          "Severity": "CRITICAL"
+        }
+      ]
+    }
+  ]
+}

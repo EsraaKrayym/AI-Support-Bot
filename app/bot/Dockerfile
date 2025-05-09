@@ -2,13 +2,16 @@ FROM python:3.10-slim
 
 WORKDIR /app/bot
 
-COPY requirements.txt .
+FROM python:3.10-slim
+WORKDIR /app/bot
+
+COPY app/bot/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Korrigierter Pfad
-COPY ./app/bot/bot.py .
-# Falls nötig: extra Dateien aus dem übergeordneten Ordner
-COPY ../trivy_output.json /app/
-COPY ../model_humor.txt /app/
+# Dein Bot-Skript
+COPY app/bot/bot.py .
+
+# Modell ins Volume legen
+COPY model_humor.txt /app/shared/model_humor.txt
 
 CMD ["python", "bot.py"]
