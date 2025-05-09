@@ -12,6 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/bot/bot.py .
 
 # Modell ins Volume legen
-COPY model_humor.txt /app/shared/model_humor.txt
+COPY app/bot/model_humor.txt /app/shared/model_humor.txt
 
 CMD ["python", "bot.py"]
