@@ -15,12 +15,11 @@ jobs:
 
       - name: Build Docker images
         run: |
-          # Ersetze Platzhalter durch tatsächliche Docker-Image-Namen
-          docker build -t ai_support_bot ./bot
-          docker build -t ai_analysis_service ./ai_analysis
-          docker build -t security_check_service ./security_check
-
-    
+          docker build -t ai_support_bot ./app/bot
+          docker build -t ai_analysis_service ./app/ai_analysis
+          docker build -t security_check_service ./app/security_check
+      
+      
 
       - name: Deploy to Argo CD
         run: |
