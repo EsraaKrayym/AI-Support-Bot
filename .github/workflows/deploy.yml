@@ -24,7 +24,7 @@ jobs:
       - name: Deploy to Argo CD
         run: |
           kubectl apply -f k8s/
-          kubectl rollout restart deployment ai-support-bot
+          kubectl rollout restart deployment
 
       # Install Trivy (Specific version v0.60.1)
       - name: Install Trivy
