@@ -23,7 +23,7 @@ jobs:
             
             
             
-            - name: Build Docker images
+      - name: Build Docker images
         run: |
           docker build -t ai_support_bot -f app/bot/Dockerfile .
           docker build -t ai_analysis_service -f app/ai_analysis/Dockerfile .
