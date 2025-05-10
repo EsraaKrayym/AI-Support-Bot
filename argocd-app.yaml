@@ -9,6 +9,6 @@ spec:
     namespace: default
   source:
     repoURL: 'https://github.com/EsraaKrayym/AI-Support-Bot'
-    targetRevision: master
+    targetRevision: main
     path: 'k8s'
   project: default
