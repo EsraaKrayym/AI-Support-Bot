@@ -15,12 +15,12 @@ spec:
       containers:
         - name: ai-analysis-service
           image: ai-support-bot-ai_analysis:latest
-          #          image: ai-support-bot-bot:latest
           imagePullPolicy: IfNotPresent
-
-
           ports:
             - containerPort: 8001
+          env:
+            - name: OPENAI_API_KEY
+              value: "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"  # <-- Hier deinen echten API-Key einsetzen
 ---
 apiVersion: v1
 kind: Service

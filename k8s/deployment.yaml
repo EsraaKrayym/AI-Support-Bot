@@ -13,9 +13,8 @@ spec:
       labels:
         app: ai-support-bot
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
         - name: ai-support-bot
-          image: ai-support-bot-bot:latest
+          image: docker.io/library/ai-support-bot-app:latest
+          imagePullPolicy: IfNotPresent
           command: [ "/bin/bash", "-c", "while true; do sleep 3600; done" ]

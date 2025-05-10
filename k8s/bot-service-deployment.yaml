@@ -16,10 +16,15 @@ spec:
         - name: bot-service
           image: ai-support-bot-bot:latest
           imagePullPolicy: IfNotPresent
-
-
           ports:
             - containerPort: 8000
+          env:
+            - name: DISCORD_WEBHOOK_URL
+              value: "https://discord.com/api/webhooks/..."
+            - name: MODEL_HUMOR_PATH
+              value: "/app/shared/model_humor.txt"
+            - name: TRIVY_REPORT_PATH
+              value: "/app/shared/trivy_output.json"
 ---
 apiVersion: v1
 kind: Service

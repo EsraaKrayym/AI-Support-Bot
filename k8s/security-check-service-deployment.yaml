@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: security-check-service
-          image: ai-support-bot-security_check:latest
+          image: docker.io/library/ai-support-bot-security-check:latest
+
           imagePullPolicy: IfNotPresent
 
 

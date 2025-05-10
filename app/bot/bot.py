@@ -108,7 +108,7 @@ def analyze_logs_with_ollama(logs):
 def load_trivy_logs(log_path=None):
     path = log_path or TRIVY_REPORT_PATH
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, "r", encoding="utf-8-sig") as f:
             raw_data = json.load(f)
             vulnerabilities = []
             if isinstance(raw_data, dict) and "Results" in raw_data:
@@ -127,7 +127,7 @@ def load_trivy_logs(log_path=None):
 # Funktion zur Erstellung des Humor-Prompts
 def build_prompt_with_logs(logs):
     try:
-        with open(MODEL_HUMOR_PATH, "r") as file:
+        with open(MODEL_HUMOR_PATH, "r", encoding="utf-8-sig") as file:
             humor_base = file.read().strip()
 
         logs_as_text = "\n\n".join([f"Vulnerability {i+1}: {log.get('Title', 'No Title')}" for i, log in enumerate(logs)])
