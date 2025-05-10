@@ -32,12 +32,12 @@ jobs:
 
       - name: Push ai_support_bot to GHCR
         run: |
-          docker tag ai_support_bot ghcr.io/${{ github.actor }}/ai_support_bot:latest
-          docker push ghcr.io/${{ github.actor }}/ai_support_bot:latest
-      
-      
+          docker tag ai_support_bot ghcr.io/${{ github.actor,, }}/ai_support_bot:latest
+          docker push ghcr.io/${{ github.actor,, }}/ai_support_bot:latest
 
-      # Install Trivy (Specific version v0.60.1)
+
+
+# Install Trivy (Specific version v0.60.1)
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@v0.2.0
         with:
