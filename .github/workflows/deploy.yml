@@ -3,7 +3,7 @@ name: Docker Image Scan
 on: [push]
 
 env:
-  USER: "esraakrayym"
+  USER: ${{ github.actor }}
 
 jobs:
   build:
