@@ -30,10 +30,10 @@ jobs:
           docker build -t security_check_service -f app/security_check/Dockerfile .
           
 
-      - name: Push ai_support_bot to GHCR
-        run: |
-          docker tag ai_support_bot ghcr.io/${{ github.actor}}/ai_support_bot:latest
-          docker push ghcr.io/${{ github.actor}}/ai_support_bot:latest
+      #- name: Push ai_support_bot to GHCR
+       # run: |
+        #  docker tag ai_support_bot ghcr.io/${{ github.actor}}/ai_support_bot:latest
+         # docker push ghcr.io/${{ github.actor}}/ai_support_bot:latest
 
 
 
@@ -43,6 +43,16 @@ jobs:
         uses: aquasecurity/setup-trivy@v0.2.0
         with:
           version: latest # Specify the desired version
+
+  # Scan the Docker image for vulnerabilities
+      - name: Scan Docker image for vulnerabilities
+    run: |
+      trivy image \
+        --severity CRITICAL \
+        --format json \
+        --output trivy_output.json \
+        ghcr.io/esraakrayym/ai_support_bot:latest
+
 
       # Build the new Docker image with trivy_output.json
       - name: Build the new Docker image with trivy_output.json
