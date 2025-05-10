@@ -32,8 +32,9 @@ jobs:
 
       - name: Push ai_support_bot to GHCR
         run: |
-          docker tag ai_support_bot ghcr.io/${{ github.actor,, }}/ai_support_bot:latest
-          docker push ghcr.io/${{ github.actor,, }}/ai_support_bot:latest
+          docker tag ai_support_bot ghcr.io/${{ github.actor}}/ai_support_bot:latest
+          docker push ghcr.io/${{ github.actor}}/ai_support_bot:latest
+
 
 
 
