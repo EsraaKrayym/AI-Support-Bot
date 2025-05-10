@@ -46,12 +46,8 @@ jobs:
 
   # Scan the Docker image for vulnerabilities
       - name: Scan Docker image for vulnerabilities
-    run: |
-      trivy image \
-        --severity CRITICAL \
-        --format json \
-        --output trivy_output.json \
-        ghcr.io/esraakrayym/ai_support_bot:latest
+        run: |
+           trivy image --severity CRITICAL --format json --output trivy_output.json ghcr.io/esraakrayym/ai_support_bot:latest
 
 
       # Build the new Docker image with trivy_output.json
