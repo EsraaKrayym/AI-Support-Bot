@@ -28,10 +28,14 @@ jobs:
           docker build -t ai_support_bot -f app/bot/Dockerfile .
           docker build -t ai_analysis_service -f app/ai_analysis/Dockerfile .
           docker build -t security_check_service -f app/security_check/Dockerfile .
-      
-      
+          
 
-     
+      - name: Push ai_support_bot to GHCR
+        run: |
+          docker tag ai_support_bot ghcr.io/${{ github.actor }}/ai_support_bot:latest
+          docker push ghcr.io/${{ github.actor }}/ai_support_bot:latest
+      
+      
 
       # Install Trivy (Specific version v0.60.1)
       - name: Install Trivy
@@ -45,11 +49,7 @@ jobs:
           docker build -t ghcr.io/$USER/ai-support-bot-with-trivy-output:latest -f Dockerfile.trivy-analysis .
 
 
-      - name: Push ai_support_bot to GHCR
-        run: |
-          docker tag ai_support_bot ghcr.io/${{ github.actor }}/ai_support_bot:latest
-          docker push ghcr.io/${{ github.actor }}/ai_support_bot:latest
-          
+      
           # Push the Docker image to GitHub Container Registry
       - name: Push the Docker image to GitHub Container Registry
         run: |
