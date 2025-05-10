@@ -15,29 +15,19 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -t ai_support_bot -f app/bot/Dockerfile .
-          docker build -t ai_analysis_service -f app/ai_analysis/Dockerfile .
-          docker build -t security_check_service -f app/security_check/Dockerfile .
-      
-      
+          docker build -t ai_support_bot ./app/bot
+          docker build -t ai_analysis_service ./app/ai_analysis
+          docker build -t security_check_service ./app/security_check
 
-      - name: Deploy to Argo CD
-        run: |
-          kubectl apply -f k8s/
-          kubectl rollout restart deployment
-
-      # Install Trivy (Specific version v0.60.1)
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@v0.2.0
         with:
-          version: latest # Specify the desired version
+          version: latest
 
-      # Build the new Docker image with trivy_output.json
-      - name: Build the new Docker image with trivy_output.json
+      - name: Build Docker image with trivy_output.json
         run: |
           docker build -t ghcr.io/$USER/ai-support-bot-with-trivy-output:latest -f Dockerfile.trivy-analysis .
 
-      # Push the Docker image to GitHub Container Registry
-      - name: Push the Docker image to GitHub Container Registry
+      - name: Push Docker image to GitHub Container Registry
         run: |
           docker push ghcr.io/$USER/ai-support-bot-with-trivy-output:latest
