@@ -15,9 +15,9 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -t ai_support_bot ./app/bot
-          docker build -t ai_analysis_service ./app/ai_analysis
-          docker build -t security_check_service ./app/security_check
+          docker build -t ai_support_bot -f app/bot/Dockerfile .
+          docker build -t ai_analysis_service -f app/ai_analysis/Dockerfile .
+          docker build -t security_check_service -f app/security_check/Dockerfile .
       
       
 
