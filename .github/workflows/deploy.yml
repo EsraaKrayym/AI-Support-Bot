@@ -44,7 +44,13 @@ jobs:
         run: |
           docker build -t ghcr.io/$USER/ai-support-bot-with-trivy-output:latest -f Dockerfile.trivy-analysis .
 
-      # Push the Docker image to GitHub Container Registry
+
+      - name: Push ai_support_bot to GHCR
+        run: |
+          docker tag ai_support_bot ghcr.io/${{ github.actor }}/ai_support_bot:latest
+          docker push ghcr.io/${{ github.actor }}/ai_support_bot:latest
+          
+          # Push the Docker image to GitHub Container Registry
       - name: Push the Docker image to GitHub Container Registry
         run: |
           docker push ghcr.io/$USER/ai-support-bot-with-trivy-output:latest
