@@ -3,7 +3,7 @@ name: Docker Image Scan
 on: [push]
 
 env:
-  USER: ${{ github.actor }}
+  USER: "esraakrayym"
 
 jobs:
   build:
@@ -32,8 +32,8 @@ jobs:
 
       - name: Push ai_support_bot to GHCR
         run: |
-          docker tag ai_support_bot ghcr.io/${{ github.actor}}/ai_support_bot:latest
-          docker push ghcr.io/${{ github.actor}}/ai_support_bot:latest
+          docker tag ai_support_bot ghcr.io/esraakrayym/ai_support_bot:latest
+          docker push ghcr.io/esraakrayym/ai_support_bot:latest
 
         # Scan the Docker image for vulnerabilities
       - name: Scan Docker image for vulnerabilities
