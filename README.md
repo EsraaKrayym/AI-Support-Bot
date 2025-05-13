@@ -1,38 +1,61 @@
 # AI-Support-Bot
-# AI-based Support Bot for Technical Issues
 
-This is a bot that analyzes logs and security issues, providing alerts and solutions in a humorous way.
+Ein AI-basierter Support-Bot zur Analyse von Logs und Sicherheitsproblemen – mit einem Hauch von Humor.
 
-## Technologies
+## Technologien
 
 - Python 3.8+
-- Docker & Kubernetes
-- GitLab CI/CD
-- Argo CD for deployment
-- OpenAI GPT for log analysis
+- Docker & Docker Compose
+- Kubernetes (Minikube)
+- Argo CD für GitOps-Deployment
+- OpenAI GPT für Log-Analyse
+- Trivy für Sicherheitsscans von Docker-Images
 
-## Setup
+## Lokale Entwicklung mit Docker Compose
 
-1. Clone the repository
-2. Build Docker containers using `docker-compose build`
-3. Run with `docker-compose up`
-4. Access the bot at `http://localhost:8000`
-
-## Deployment
-
-This project is deployed using Argo CD and Kubernetes. Please refer to the Kubernetes files in the `k8s/` directory.
- 
-## Argo-CD-Anwendung erstellen
-kubectl apply -f argo-app.yaml
-## Docker-Container bauen und starten
+```bash
 docker-compose build
 docker-compose up
-## Kubernetes-Deployment durchführen
-kubectl apply -f k8s/
-## contiener starten
-docker-compose up
+```
 
-docker build -t ai-support-bot-bot:latest .
-kubectl get deployment ai-analysis-service -o yaml
-#####
+## Deployment mit Kubernetes
+
+```bash
+minikube start
+
+minikube image load ai-support-bot-bot:latest
+minikube image load ai-support-bot-ai_analysis:latest
+minikube image load ai-support-bot-security-check:latest
+
+kubectl apply -f k8s/
+kubectl get pods
+kubectl port-forward service/bot-service 8000:80
+```
+
+## Argo CD GitOps Deployment
+
+```bash
+kubectl create namespace argocd
+
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+kubectl port-forward svc/argocd-server -n argocd 8088:443
+
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+
+kubectl apply -n argocd -f argocd-app.yaml
+```
+
+## Sicherheitsscan mit Trivy
+
+```bash
+brew install aquasecurity/trivy/trivy
+
+trivy image --severity CRITICAL --format json --output trivy_output.json ai-support-bot-bot:latest
+```
+Team7 :
+Lama Chihabi
+Esraa Krayym
+Tukazban Aliyeva
+Nouran Alhabash
 
