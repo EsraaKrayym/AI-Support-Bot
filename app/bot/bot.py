@@ -6,12 +6,15 @@ import os
 import discord
 import requests
 import subprocess
+import openai
+
 
 
 from dotenv import load_dotenv
 
 # Lade Umgebungsvariablen
 load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Konfiguriere Logging
 logging.basicConfig(level=logging.DEBUG)
@@ -29,24 +32,10 @@ if not MODEL_HUMOR_PATH:
     raise ValueError("MODEL_HUMOR_PATH fehlt in der .env-Datei.")
 
 
-# Konfiguriere Ollama-Client
-#ollama_host = os.getenv('OLLAMA_HOST', 'http://localhost:11434')  # Falls der Host ein anderer ist
-#ollama_client = ollama.Client(host=ollama_host)  # Ollama-Client wird hier instanziiert
-
-
 # Erstelle die Intents
 intents = discord.Intents.default()  # Aktiviert standardmäßig die gängigen Ereignisse
 intents.messages = True  # Aktiviert das Empfangen von Nachrichten
 intents.guilds = True    # Aktiviert das Empfangen von Serverereignissen
-
-# Erstelle den Discord-Client mit den Intents
-#client = discord.Client(intents=discord.Intents.default())
-
-
-
-#@client.event
-#async def on_ready():
- #   print(f'Bot ist eingeloggt als {client.user}')
 
 
 # Vordefinierte Fragen, auf die der Bot antworten soll
@@ -60,23 +49,6 @@ def get_response(message_content):
 
     # Wenn die Nachricht eine der vordefinierten Fragen ist, gib die Antwort zurück
     return responses.get(message_content.lower(), None)
-
-
-#@client.event
-#async def on_message(message):
-   # if message.author == client.user:
-        #return
-
-    # Hole die Antwort basierend auf der Nachricht
-    response = get_response(message.content)
-
-    #if response:
-        # Sende die Antwort an den Discord-Channel
-        #await message.channel.send(response)
-    #else:
-     #   logging.debug(f"Bot hat keine Antwort auf: {message.content}")
-
-
 
 
 # Humorvolle Antworten (Beispielantworten)
@@ -124,27 +96,79 @@ def load_trivy_logs(log_path=None):
         logging.error(f"Error loading logs: {e}")
         return []
 
-# Funktion zur Erstellung des Humor-Prompts
+# Funktion zur Erstellung des humorvollen Prompts aus Logs + Witzen
 def build_prompt_with_logs(logs):
     try:
         with open(MODEL_HUMOR_PATH, "r", encoding="utf-8-sig") as file:
-            humor_base = file.read().strip()
+            # Nur echte Witzzeilen verwenden (keine PARAMETER-Zeilen)
+            humor_prompts = [
+                line.strip()
+                for line in file.readlines()
+                if line.strip() and not line.strip().lower().startswith("parameter")
+            ]
 
-        logs_as_text = "\n\n".join([f"Vulnerability {i+1}: {log.get('Title', 'No Title')}" for i, log in enumerate(logs)])
+        output = []
 
-        return (
-            f"{humor_base}\n\n"
-            f"You are YoBot — a sarcastic AI DevSecOps assistant who turns boring security reports into hilarious, meme-worthy Slack/Discord messages.\n\n"
-            f"Now, here's a list of vulnerabilities. For each one, roast it, mock its severity like a drama queen, and end with a funny recommendation.\n\n"
-            f"{logs_as_text}\n\n"
-            f"🎭 Keep it short, sharp, sassy, and never boring. Go full Sheldon Cooper if needed."
-        )
+        for i, log in enumerate(logs):
+            title = log.get("Title", "No Title")
+            desc = log.get("Description", "Keine Beschreibung")
+            severity = log.get("Severity", "UNKNOWN")
+            joke = humor_prompts[i % len(humor_prompts)]  # zirkulär Witze verwenden
+
+            message = (
+                f"🛡️ **Vulnerability {i+1}**: {title} (Severity: {severity})\n"
+                f"📝 Beschreibung: {desc}\n"
+                f"😂 Joke: {joke}\n"
+                f"🔧 Empfehlung: Patch installieren oder… frag den Praktikanten, warum das noch live ist."
+            )
+            output.append(message)
+
+        return "\n\n".join(output)
+
     except Exception as e:
-        logging.error(f"Error building prompt: {e}")
+        logging.error(f"Fehler beim Erstellen des Prompts: {e}")
         return ""
 
+def analyze_logs_with_openai(logs):
+    if not logs:
+        return "✅ Keine neuen Sicherheitslücken gefunden."
+
+    prompt_intro = (
+        "Du bist ein sarkastischer DevSecOps-Experte. "
+        "Analysiere die folgenden Sicherheitslücken aus einem Trivy-Scan "
+        "und gib eine humorvolle, aber nützliche Zusammenfassung. Verwende Emojis.\n\n"
+    )
+
+    vuln_text = "\n".join(
+        f"- {v.get('Title', 'Kein Titel')} (Severity: {v.get('Severity', '???')}): {v.get('Description', '')}"
+        for v in logs
+    )
+
+    full_prompt = prompt_intro + vuln_text
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Du bist ein humorvoller DevSecOps-Experte, der ausschließlich auf **Deutsch** antwortet. Deine Aufgabe ist es, Sicherheitslücken sarkastisch, unterhaltsam und mit Emojis zu kommentieren."},
+                {"role": "user", "content": full_prompt + "\n\n⚠️ Wichtig: Antworte bitte **ausschließlich auf Deutsch** mit einem sarkastischen Ton und passenden Emojis."}
+
+            ],
+            max_tokens=800,
+            temperature=1.1
+        )
+
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        logging.error(f"Fehler bei OpenAI-Analyse: {e}")
+        return "❌ Fehler bei der OpenAI-Analyse."
+
+
 # Funktion, um die Logs an Ollama zu senden
-async def send_prompt_to_ollama(prompt: str, model: str = "tinyllama", temperature: float = 1.0) -> str:
+async def send_prompt_to_ollama(prompt: str, model: str = "mistral", temperature: float = 0.7) -> str:
+
+
+
     url = f"{OLLAMA_HOST}/v1/completions"
     payload = {
         "model": model,
@@ -209,26 +233,36 @@ async def send_discord_message_async(message):
     except Exception as e:
         logging.error(f"Error sending to Discord: {e}")
 
+async def ask_ollama(question, model="mistral", temperature=0.7):
+    return await send_prompt_to_ollama(prompt=question, model=model, temperature=temperature)
+
+
 # Hauptlogik
 async def main():
     try:
-        # Beispiel Log-Daten (Hier würdest du echte Logs analysieren)
         logs = load_trivy_logs()
-
         if not logs:
             logging.error("No valid logs to process.")
             return
 
+        # Humorvoller Ollama-Text (bestehend aus Witzen)
         prompt = build_prompt_with_logs(logs)
         if not prompt:
             logging.error("Failed to build prompt.")
             return
-        response = await send_prompt_to_ollama(prompt, temperature=1.1)
-        final_message = clean_discord_message(response)
-        await send_discord_message_async(final_message)
+
+        ollama_response = await send_prompt_to_ollama(prompt, temperature=1.1)
+        final_ollama = clean_discord_message(ollama_response)
+        await send_discord_message_async("🤖 **Ollama-Analyse:**\n" + final_ollama)
+
+        # KI-Analyse mit OpenAI
+        openai_response = analyze_logs_with_openai(logs)
+        final_openai = clean_discord_message(openai_response)
+        await send_discord_message_async("🧠 **OpenAI-Analyse:**\n" + final_openai)
 
     except Exception as e:
         logging.error(f"Error in main process: {e}")
+
 
 
 if __name__ == "__main__":

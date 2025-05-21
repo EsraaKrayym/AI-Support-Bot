@@ -14,8 +14,9 @@ Ein AI-basierter Support-Bot zur Analyse von Logs und Sicherheitsproblemen – m
 ## Lokale Entwicklung mit Docker Compose
 
 ```bash
-docker-compose build
-docker-compose up
+docker compose down 
+docker compose build --no-cache  
+docker compose up -d 
 ```
 
 ## Deployment mit Kubernetes

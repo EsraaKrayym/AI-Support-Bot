@@ -9,10 +9,24 @@ services:
     env_file:
       - app/bot/.env
 
+  app:
+    build:
+      context: .
+      dockerfile: app/UI/Dockerfile
+    image: ai-support-bot-bot-2
+    volumes:
+      - ./shared:/app/shared
+    env_file:
+      - app/bot/.env
+    ports:
+      - "7860:7860"
+
   ai_analysis:
     build:
       context: .
       dockerfile: app/ai_analysis/Dockerfile
+    volumes:
+      - ./shared:/app/shared
     env_file:
       - app/bot/.env
 
@@ -23,7 +37,7 @@ services:
     image: ai-support-bot-security-check
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - shared-logs:/app/shared
+      - ./shared:/app/shared
     environment:
       TRIVY_IMAGE: ai-support-bot-bot
       CHECK_INTERVAL: 120
@@ -32,5 +46,4 @@ services:
     env_file:
       - app/bot/.env
 
-volumes:
-  shared-logs:
+

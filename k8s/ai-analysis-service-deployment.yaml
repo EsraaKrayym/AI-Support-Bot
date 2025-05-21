@@ -20,7 +20,7 @@ spec:
             - containerPort: 8001
           env:
             - name: OPENAI_API_KEY
-              value: "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"  # <-- Hier deinen echten API-Key einsetzen
+              value: "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"
 ---
 apiVersion: v1
 kind: Service
